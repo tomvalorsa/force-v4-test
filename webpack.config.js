@@ -34,18 +34,10 @@ module.exports = {
   },
   plugins: [
     new copy([
-      {from: 'src/index.html'},
-      {from: 'node_modules/leaflet/dist/images', to: 'leaflet-images'}
+      {from: 'src/index.html'}
     ])
   ],
   postcss: [
     require('postcss-nested')
-  ],
-  externals: {
-    'jsdom': 'window',
-    'cheerio': 'window',
-    'react/addons': true,
-    'react/lib/ExecutionEnvironment': true,
-    'react/lib/ReactContext': true
-  }
+  ]
 }

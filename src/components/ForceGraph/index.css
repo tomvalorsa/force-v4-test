@@ -1,0 +1,7 @@
+.graph {
+  display: block;
+  margin: auto;
+  border: 1px solid #BDBDBD;
+  height: 80vh;
+  width: 80vw;
+}

@@ -1,8 +1,1 @@
-# Project Skeleton
-
-- react
-- redux
-- reselect
-- babel
-- webpack
-- karma/webpack/enzyme testing
+d3 v4 force graph test for multiple foci with react
