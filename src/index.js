@@ -9,9 +9,13 @@ import thunk from 'redux-thunk'
 import rootReducer from './reducers'
 import App from './connected/App'
 
+import { load } from 'actions/data'
+
 import './index.css'
 
 let store = applyMiddleware(thunk)(createStore)(rootReducer)
+
+store.dispatch(load())
 
 render(
   <Provider store={store}>
