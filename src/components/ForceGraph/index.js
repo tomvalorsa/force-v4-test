@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import styles from './index.css'
 import { scaleLinear } from 'd3-scale'
-import { select, event } from 'd3-selection'
-import { forceX, forceY, forceSimulation, forceCollide } from 'd3-force'
+import { select, event, merge } from 'd3-selection'
+import { forceX, forceY, forceSimulation, forceCollide, forceManyBody } from 'd3-force'
 import { drag } from 'd3-drag'
 
 import Pin from '../Pin'
@@ -27,6 +27,8 @@ export default class ForceGraph extends Component {
       .domain([0, 2])
       .range([100, width - 100])
 
+    let g = select(this.refs.nodes)
+
     let foci = {
       'a': {
         'x': xScale(0),
@@ -45,42 +47,49 @@ export default class ForceGraph extends Component {
     let fX = forceX(d => foci[d.baseStation].x).strength(0.2)
     let fY = forceY(d => foci[d.baseStation].y).strength(0.2)
 
-    let nodeSel = select(this.refs.nodes)
-      .selectAll('circle')
-      .attr('fill', d => colors[d.baseStation])
-      .data(data, d => d.beacon)
-    
-    nodeSel.exit().remove()
-
-    nodeSel.enter()
-      .append('circle')
-      .attr('r', 5)
-      .attr('fill', d => colors[d.baseStation])
-
-    nodeSel.call(drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended))
-
-    // let nodeSel = select(this.refs.nodes)
-    //   .selectAll('circle')
-    //   .data(data, d => d.beacon)
-    //   .enter().append('circle')
-    //   .attr('r', 5)
-    //   .attr('fill', d => colors[d.baseStation])
-
-    let force = forceSimulation(data, d => d.beacon)
+    let simulation = forceSimulation(data)
       .velocityDecay(0.5)
       .force('x', fX)
       .force('y', fY)
-      .force('collide', forceCollide(8))
+      .force('collide', forceCollide(10))
+      .force('charge', forceManyBody())
+      .on('tick', tick)
 
-    force.nodes(data, d => d.beacon)
-      .on('tick', () => nodeSel.attr('transform', d => `translate(${d.x}, ${d.y})`))
+    start()
 
+    function start() {
+      let nodes = g.selectAll('.node')
+        .attr('fill', d => colors[d.baseStation])
+        .data(data, d => d.beacon)
+
+      nodes.enter()
+        .append('circle')
+        .attr('class', 'node')
+        .attr('r', 5)
+        .attr('fill', d => colors[d.baseStation])
+
+      nodes.exit().remove()
+
+      simulation.nodes(data)
+      simulation.restart()
+    }
+
+    function tick() {
+      let nodes = g.selectAll('.node')
+
+      nodes
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+    }
+
+    let nodes = g.selectAll('.node')
+      .call(drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended))
 
     function dragstarted(d) {
-      if (!event.active) force.alphaTarget(0.3).restart()
+      if (!event.active) simulation.alphaTarget(0.3).restart()
       d.fx = d.x
       d.fy = d.y
     }
@@ -91,7 +100,7 @@ export default class ForceGraph extends Component {
     }
     
     function dragended(d) {
-      if (!event.active) force.alphaTarget(0)
+      if (!event.active) simulation.alphaTarget(0)
       d.fx = null
       d.fy = null
     } 
