@@ -1,4 +1,4 @@
-import { LOADED_DATA } from '../actionTypes'
+import { LOADED_DATA, SHUFFLE_DATA } from '../actionTypes'
 import path from '../../data.csv'
 
 import { csv } from 'd3'
@@ -11,3 +11,7 @@ export const load = () => (dispatch, getState) => {
     })
   })
 }
+
+export const shuffleData = () => ({
+  type: SHUFFLE_DATA
+})
