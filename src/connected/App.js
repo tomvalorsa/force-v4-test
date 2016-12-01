@@ -10,12 +10,10 @@ class App extends Component {
   render() {
     return (
       <div className={styles.container}>
-        <div className={styles.center}>
-          <SVG>
-            <ForceGraph />
-          </SVG>
-          <Button text="Randomise" />
-        </div>
+        <SVG>
+          <ForceGraph />
+        </SVG>
+        <Button text="Randomise" />
       </div>
     )
   }

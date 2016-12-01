@@ -3,8 +3,8 @@ import styles from './index.css'
 
 export default class SVG extends Component {
   state = {
-    width: window.innerHeight,
-    height: window.innerHeight
+    width: 100,
+    height: 100
   }
   componentDidMount(){
     this.update()
@@ -24,7 +24,8 @@ export default class SVG extends Component {
     }
   }
   render(){
+    let { width, height } = this.state
     let kids = Children.map(this.props.children, d => cloneElement(d, this.state))
-    return <svg ref="svg" id="svg" className={styles.svg}>{kids}</svg>
+    return <svg ref="svg" className={styles.svg}>{kids}</svg>
   }
 }
