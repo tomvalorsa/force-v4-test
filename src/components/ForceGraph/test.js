@@ -24,15 +24,7 @@ const colors = {
 
 export default class ForceGraph extends Component {
   componentDidMount() {
-    this.update()
-  }
-  componentDidUpdate() {
-    this.update()
-  }
-  update() {
-    let { width, height, data } = this.props
-
-    let g = select(this.refs.nodes)
+    let { width, height } = this.props
 
     let xScale = scaleLinear()
       .domain([0, 2])
@@ -56,13 +48,23 @@ export default class ForceGraph extends Component {
     let fX = forceX(d => foci[d.baseStation].x).strength(0.2)
     let fY = forceY(d => foci[d.baseStation].y).strength(0.2)
 
-    let simulation = forceSimulation()
+    this.simulation = forceSimulation()
       .velocityDecay(0.5)
       .force('x', fX)
       .force('y', fY)
       .force('collide', forceCollide(10))
       .force('charge', forceManyBody())
       .on('tick', this.tick)
+
+    this.update()
+  }
+  componentDidUpdate() {
+    this.update()
+  }
+  update() {
+    let { data } = this.props
+
+    let g = select(this.refs.nodes)
 
     // Update
     let nodes = g.selectAll('.node')
@@ -78,33 +80,30 @@ export default class ForceGraph extends Component {
 
     // Only works on update selection not on enter
     nodes.call(drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended))
+      .on('start', this.dragstarted)
+      .on('drag', this.dragged)
+      .on('end', this.dragended))
 
     // Exit
     nodes.exit().remove()
 
-    simulation.nodes(data)
-    simulation.restart()
-
-    function dragstarted(d) {
-      if (!event.active) simulation.alphaTarget(0.3).restart()
-      d.fx = d.x
-      d.fy = d.y
-    }
-    
-    function dragged(d) {
-      d.fx = event.x
-      d.fy = event.y
-    }
-    
-    function dragended(d) {
-      if (!event.active) simulation.alphaTarget(0)
-      d.fx = null
-      d.fy = null
-    } 
+    this.simulation.nodes(data)
+    this.simulation.restart()
   }
+  dragstarted = (d) => {
+    if (!event.active) this.simulation.alphaTarget(0.3).restart()
+    d.fx = d.x
+    d.fy = d.y
+  }
+  dragged = (d) => {
+    d.fx = event.x
+    d.fy = event.y
+  }
+  dragended = (d) => {
+    if (!event.active) this.simulation.alphaTarget(0)
+    d.fx = null
+    d.fy = null
+  } 
   tick = () => {
     let nodes = select(this.refs.nodes).selectAll('.node')
 

@@ -3,8 +3,8 @@ import styles from './index.css'
 
 export default class SVG extends Component {
   state = {
-    width: 100,
-    height: 100
+    width: window.innerHeight,
+    height: window.innerHeight
   }
   componentDidMount(){
     this.update()
