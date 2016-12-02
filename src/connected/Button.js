@@ -4,6 +4,6 @@ import { shuffleData } from 'actions/data'
 
 export default connect(state => {
   return {
-
+    simulation: state.force.simulation
   }
-}, {click: shuffleData})(Button)
+}, {shuffleData})(Button)

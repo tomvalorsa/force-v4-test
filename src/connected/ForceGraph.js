@@ -1,8 +1,10 @@
 import ForceGraph from '../components/ForceGraph'
 import { connect } from 'react-redux'
+import { setSimulation } from 'actions/force'
 
 export default connect(state => {
   return {
-    data: state.data
+    data: state.data,
+    simulation: state.force.simulation
   }
-}, {})(ForceGraph)
+}, {setSimulation})(ForceGraph)
