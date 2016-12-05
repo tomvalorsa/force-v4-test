@@ -13,17 +13,17 @@ const colors = {
   'c': 'green'
 }
 
-/*
-  TODO:
-  - add pin instead of circle
-  - organise selections so initial render works too
-    - also need to sort out where color stuff should go...
-*/
-
-// <Pin fill="blue" height="30px" />
-
 export default class ForceGraph extends Component {
   componentDidMount() {
+    this.xScale = scaleLinear()
+      .domain([0, 2])
+
+    this.simulation = forceSimulation()
+      .velocityDecay(0.5)
+      .force('collide', forceCollide(10))
+      .force('charge', forceManyBody())
+      .on('tick', this.tick)
+
     this.update()
   }
   componentDidUpdate() {
@@ -33,22 +33,19 @@ export default class ForceGraph extends Component {
     let { width, height, data } = this.props
 
     let g = select(this.refs.nodes)
-
-    let xScale = scaleLinear()
-      .domain([0, 2])
-      .range([100, width - 100])
+    this.xScale.range([100, width - 100])
 
     let foci = {
       'a': {
-        'x': xScale(0),
+        'x': this.xScale(0),
         'y': height - 100
       },
       'b': {
-        'x': xScale(1),
+        'x': this.xScale(1),
         'y': 100
       },
       'c': {
-        'x': xScale(2),
+        'x': this.xScale(2),
         'y': height - 100
       }
     }
@@ -56,54 +53,26 @@ export default class ForceGraph extends Component {
     let fX = forceX(d => foci[d.baseStation].x).strength(0.2)
     let fY = forceY(d => foci[d.baseStation].y).strength(0.2)
 
-    let simulation = forceSimulation()
-      .velocityDecay(0.5)
+    this.simulation
       .force('x', fX)
       .force('y', fY)
-      .force('collide', forceCollide(10))
-      .force('charge', forceManyBody())
-      .on('tick', this.tick)
+      .nodes(data)
+      .alpha(0.8).restart() // reheat simulation
 
     // Update
     let nodes = g.selectAll('.node')
       .data(data, d => d.beacon)
-      .attr('fill', d => colors[d.baseStation])
-
+      
     // Enter
     nodes.enter()
       .append('circle')
       .attr('class', 'node')
       .attr('r', 5)
-      .attr('fill', d => colors[d.baseStation])
-
-    // Only works on update selection not on enter
-    nodes.call(drag()
-      .on('start', dragstarted)
-      .on('drag', dragged)
-      .on('end', dragended))
+      .merge(nodes) // Enter + Update
+        .attr('fill', d => colors[d.baseStation])
 
     // Exit
     nodes.exit().remove()
-
-    simulation.nodes(data)
-    simulation.restart()
-
-    function dragstarted(d) {
-      if (!event.active) simulation.alphaTarget(0.3).restart()
-      d.fx = d.x
-      d.fy = d.y
-    }
-    
-    function dragged(d) {
-      d.fx = event.x
-      d.fy = event.y
-    }
-    
-    function dragended(d) {
-      if (!event.active) simulation.alphaTarget(0)
-      d.fx = null
-      d.fy = null
-    } 
   }
   tick = () => {
     let nodes = select(this.refs.nodes).selectAll('.node')
