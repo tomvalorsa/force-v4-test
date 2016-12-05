@@ -90,7 +90,7 @@ export default class ForceGraph extends Component {
       .force('x', fX)
       .force('y', fY)
       .nodes(this.data)
-      .alpha(0.8).restart() // reheat simulation
+      .alphaTarget(0.25).restart() // reheat simulation
 
     // Update
     let nodes = g.selectAll('.node')
