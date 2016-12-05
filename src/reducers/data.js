@@ -1,5 +1,5 @@
 import { LOADED_DATA, SHUFFLE_DATA, ADD_DATA, REMOVE_DATA } from '../actionTypes'
-import { generateBaseStation } from 'constants'
+import { generateBaseStation } from 'util'
 
 const initialState = []
 
