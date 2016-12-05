@@ -1,8 +1,5 @@
 .btn {
   padding: 0.5em 1em;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
   cursor: pointer;
+  margin-bottom: 10px
 }

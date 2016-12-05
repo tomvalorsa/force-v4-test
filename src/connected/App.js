@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import ForceGraph from './ForceGraph'
 import Button from './Button'
+import Counter from './Counter'
 import SVG from '../components/SVG'
 
 class App extends Component {
@@ -13,7 +14,10 @@ class App extends Component {
         <SVG>
           <ForceGraph />
         </SVG>
-        <Button text="Randomise" />
+        <div className={styles.topLeft}>
+          <Button text="Randomise" />
+          <Counter />
+        </div>
       </div>
     )
   }

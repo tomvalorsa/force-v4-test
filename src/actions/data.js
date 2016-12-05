@@ -1,17 +1,27 @@
-import { LOADED_DATA, SHUFFLE_DATA } from '../actionTypes'
-import path from '../../data.csv'
-
-import { csv } from 'd3'
+import { LOADED_DATA, SHUFFLE_DATA, ADD_DATA, REMOVE_DATA } from '../actionTypes'
+import { generateBaseStation } from 'constants'
 
 export const load = () => (dispatch, getState) => {
-  csv(path, (err, data) => {
-    dispatch({
-      type: LOADED_DATA,
-      payload: data
-    })
+  let data = []
+
+  for (let i = 0; i < 50; i++) {
+    let baseStation = generateBaseStation()
+    data.push({beacon: i, baseStation})
+  }
+
+  dispatch({
+    type: LOADED_DATA,
+    payload: data
   })
 }
 
-export const shuffleData = () => ({
-  type: SHUFFLE_DATA
-})
+export const shuffleData = () => (dispatch, getState) => {
+  if (Math.random() > 0.5) {
+    dispatch({type: ADD_DATA})
+  } else {
+    dispatch({type: REMOVE_DATA})
+  }
+
+
+  dispatch({type: SHUFFLE_DATA})
+}

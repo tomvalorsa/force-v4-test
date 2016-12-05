@@ -3,3 +3,10 @@
   width: 100%;
   text-align: center;
 }
+
+.topLeft {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+}
