@@ -4,6 +4,7 @@ import { scaleLinear } from 'd3-scale'
 import { select, event, merge } from 'd3-selection'
 import { forceX, forceY, forceSimulation, forceCollide, forceManyBody } from 'd3-force'
 import { drag } from 'd3-drag'
+import { transition } from 'd3-transition'
 
 import Pin from '../Pin'
 
@@ -19,7 +20,7 @@ export default class ForceGraph extends Component {
       .domain([0, 2])
 
     this.simulation = forceSimulation()
-      .velocityDecay(0.5)
+      .velocityDecay(0.65)
       .force('collide', forceCollide(10))
       .force('charge', forceManyBody())
       .on('tick', this.tick)
@@ -72,7 +73,14 @@ export default class ForceGraph extends Component {
         .attr('fill', d => colors[d.baseStation])
 
     // Exit
-    nodes.exit().remove()
+    nodes.exit()
+      .transition()
+      .duration(1000)
+      .attr('fill', 'black')
+      .attr('r', 30)
+      .attr('cy', 0)
+      .style('opacity', 0)
+      .remove()
   }
   tick = () => {
     let nodes = select(this.refs.nodes).selectAll('.node')
